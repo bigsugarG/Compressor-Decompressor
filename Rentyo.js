@@ -63,7 +63,8 @@ function doCompress(charData){　//連長圧縮
 function doDecompress(charData){　//連長圧縮に対する復号処理
     var decompressedText = [];
     var minusFlag = false;　//現在の状態を決める
-    var countStock = 0;　//文字の数
+    var countStock = 0;　//1文字の数字
+    var preNumStock = [];　//数字のストック（1文字ずつ読み込むので、2桁以上に対応するために用意）
 
     for(i=0;i<charData.length;i++){
         if(charData[i]=="-"){　//マイナスの符号を検知
@@ -74,14 +75,18 @@ function doDecompress(charData){　//連長圧縮に対する復号処理
                 decompressedText.push(charData[i]);
                 countStock -= 1;
                 if(countStock==0){minusFlag = false;}
+                preNumStock = [];
             }else{　//正の状態
-                for(j=0;j<countStock;j++){
+                var trialNum = parseInt(preNumStock.join(""));
+                for(j=0;j<trialNum;j++){
                     decompressedText.push(charData[i]);
                 }
+                preNumStock = [];
                 countStock = 0;
             }
         }else{　//数字
-            countStock = parseInt(charData[i]);
+                countStock = parseInt(charData[i]);
+                preNumStock.push(countStock);
         }
     }    
     var resultText = decompressedText.join("");　//配列を文字列に変換
